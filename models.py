@@ -33,6 +33,8 @@ class ParkingLot(db.Model):
 
     spots = db.relationship('ParkingSpot', backref='lot', lazy=True, cascade='all, delete-orphan')
 
+
+
 # ---------------------------- #
 #     Parking Spot Model       #
 # ---------------------------- #

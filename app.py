@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 
 
 
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -94,6 +96,10 @@ def user_dashboard():
     
     user_id = session['user_id']
 
+<<<<<<< HEAD
+=======
+    # ---------- Parking Lot Info ----------
+>>>>>>> ae3cfd5 (Updated some files and added new project files)
     lots = ParkingLot.query.all()
     enriched_lots = []
     for lot in lots:
@@ -103,11 +109,19 @@ def user_dashboard():
         lot.occupied_spots = occupied
         enriched_lots.append(lot)
 
+<<<<<<< HEAD
     
     active_reservations = Reservation.query.filter_by(user_id=user_id, leaving_timestamp=None).all()
 
 
     
+=======
+    # ---------- Current Active Reservation ----------
+    active_reservations = Reservation.query.filter_by(user_id=user_id, leaving_timestamp=None).all()
+
+
+    # ---------- Parking Summary Chart ----------
+>>>>>>> ae3cfd5 (Updated some files and added new project files)
     data = defaultdict(int)
     reservations = Reservation.query.filter_by(user_id=user_id).all()
     for res in reservations:
