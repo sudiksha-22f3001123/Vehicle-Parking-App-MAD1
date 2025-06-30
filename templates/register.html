@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        #main {
+            height: 100vh;
+            background: url('/static/image/login.png') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 20%;
+        }
+
+        #form-body {
+            width: 360px;
+            background: rgba(255, 255, 255, 0.486);
+            padding: 20px 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(198, 203, 205, 0.701);
+            color: #000000;
+            text-align: center;
+        }
+
+        #form-body input {
+            width: 100%;
+            padding: 8px 10px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgba(180, 240, 248, 0.725);
+            color:#000000;
+        }
+
+        h1 {
+            font-size: 35px;
+            font-weight: bold;
+            color: #0f083b;
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            color: #222222;
+            font-size: 0.85rem;
+            margin-top: 2px;
+            margin-bottom: 3px;
+            text-align: left;
+            display: block;
+        }
+
+        .btn-custom {
+        margin-top: 15px;
+        padding: 10px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #6379f7, #f069d0 ) !important;
+        color: rgb(8, 8, 97) !important;
+        border: none !important;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.3);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-custom:hover {
+        transform: scale(1.03);
+        background: linear-gradient(135deg, #9be5fa, #f18ec2) !important;
+        box-shadow: 0px 10px 20px rgba(1, 3, 12, 0.7);
+
+    }
+
+        .link-text {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .link-text a {
+            color: darkred;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="form-body">
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="container">
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <h1 class="mb-3" style="font-weight: bold; color: #0f083b;margin-top: 16px;">Register Here</h1>
+            <form method="post" action="/register">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" id="email" name="mail" placeholder="xyz@gmail.com" required>
+
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="user_name" placeholder="abc" required>
+
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="pwd" required>
+
+                <label for="vehicle_number" class="form-label">Vehicle Number</label>
+                <input type="text" id="vehicle_number" name="vehicle_number">
+
+                <label for="pin_code" class="form-label">Pin Code</label>
+                <input type="text" id="pin_code" name="pin_code"> 
+
+                <div style="margin-top: 20px; margin-bottom:30px;">
+                      <input type="submit" class="btn-custom" value="Register">
+                </div>
+
+                <p class="link-text" style="color: #272626; font-size: 0.95rem;">Existing user?<br><a href="{{ url_for('login') }}">Login here</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

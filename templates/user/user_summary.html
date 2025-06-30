@@ -1,0 +1,249 @@
+{% extends 'user/layout.html' %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(to right, #000000, #110f49, #34215f);
+        color: #fff;
+    }
+
+    .summary-container {
+        margin-top: 60px;
+        padding-bottom: 40px;
+    }
+
+    /*.summary-container h2 {
+        font-size: 2.5rem;
+        padding: 10px;
+        margin-top: 20px;
+        margin: 0 auto 20px auto;
+        width: fit-content;
+        background: linear-gradient(to right, #f3f3f3, #07e02e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .summary-table {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 20px;
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto 40px auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }*/
+
+    .summary-container h2 {
+    font-size: 2.5rem;
+    padding: 10px;
+    margin: 30px auto 30px auto;  /* Reduced top spacing */
+    width: fit-content;
+    background: linear-gradient(to right, #f3f3f3, #07e02e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Use this class for any section heading like "Parking Activity Overview" */
+.section-heading {
+    font-size: 2.5rem;
+    padding: 10px;  /* Match padding with h2 */
+    margin: 10px auto;  /* Consistent spacing */
+    width: fit-content;
+    background: linear-gradient(to right, #f3f3f3, #07e02e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-align: center;
+}
+
+.summary-table {
+    background: rgba(75, 73, 73, 0.15);
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+
+    .summary-table table {
+        width: 100%;
+        color: #fff;
+    }
+
+    .summary-table th,
+    .summary-table td {
+        padding: 12px 16px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        vertical-align: middle;
+        font-size: 1rem;
+    }
+
+    .summary-table th {
+        background: rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+    }
+
+   /* h4 {
+       margin-top: 70px;
+        font-size: 2rem;
+        text-align: center;
+        color: #00ffe7;
+        text-shadow: 1px 1px 2px #000;
+    }*/
+
+    /*.section-heading {
+    font-size: 2.5rem;
+    padding: 40px;
+    margin: 0 auto 20px auto;
+    width: fit-content;
+    background: linear-gradient(to right, #f3f3f3, #07e02e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-align: center;
+}*/
+
+
+    .graph-section {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 50px;
+        gap:70px;
+    }
+
+    .graph-box {
+        background:  rgba(102, 102, 102, 0.221);
+        
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        width: 320px;
+        margin-bottom: 100px;
+        
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 250px !important;
+    }
+
+    @media screen and (max-width: 992px) {
+        .graph-box {
+            width: 90%;
+        }
+    }
+
+    .graph-desc {
+    margin-top: 15px;
+    color: #d6f6ff;
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.4;
+}
+
+</style>
+
+<div class="container summary-container">
+    <h2>Parking Summary</h2>
+
+    <div class="summary-table">
+        <table>
+            <tr>
+                <th>Total Bookings</th>
+                <td>{{ total_bookings }}</td>
+            </tr>
+            <tr>
+                <th>Total Time Parked</th>
+                <td>{{ total_time }}</td>
+            </tr>
+            <tr>
+                <th>Total Amount Spent</th>
+                <td>₹{{ total_cost }}</td>
+            </tr>
+            <tr>
+                <th>Places You Have Booked</th>
+                <td>{{ visited_places | join(', ') }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<h2 class="section-heading">Parking Activity Overview</h2>
+
+<div class="graph-section">
+    <div class="graph-box">
+        <canvas id="barChart"></canvas>
+        <p class="graph-desc" style="margin-top: 45px;">Number of bookings made per parking location.</p>
+    </div>
+    <div class="graph-box">
+        <canvas id="lineChart"></canvas>
+        <p class="graph-desc"  style="margin-top: 45px;">Displays monthly booking trends throughout the year.</p>
+    </div>
+    <div class="graph-box">
+        <canvas id="pieChart"></canvas>
+         <p class="graph-desc"  style="margin-top: 45px;">Breakdown of bookings by location in percentage.</p>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ pie_labels | tojson }},
+            datasets: [{
+                label: 'Bookings per Location',
+                data: {{ pie_values | tojson }},
+                backgroundColor: '#36a2eb',
+                borderColor: '#1e88e5',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: {{ monthly_data.keys() | list | tojson }},
+            datasets: [{
+                label: 'Monthly Bookings',
+                data: {{ monthly_data.values() | list | tojson }},
+                fill: false,
+                borderColor: '#ff6384',
+                tension: 0.3
+            }]
+        }
+    });
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ pie_labels | tojson }},
+            datasets: [{
+                label: 'Spending Distribution',
+                data: {{ pie_values | tojson }},
+                backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40']
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

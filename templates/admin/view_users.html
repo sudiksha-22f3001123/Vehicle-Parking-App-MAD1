@@ -1,0 +1,107 @@
+{% extends 'admin/layout.html' %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(to right, #000000, #110f49, #432677,#61047d);
+        color: #fff;
+    }
+
+    .container {
+        margin-top: 50px;
+        padding-bottom: 40px;
+    }
+
+    h3 {
+        font-size: 2.5rem;
+        margin: 0 auto 30px auto;
+        width: fit-content;
+         font-family: 'Orbitron', sans-serif;
+        background: linear-gradient(to right, #f3f3f3, #07e02e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .table {
+        background: rgba(11, 63, 122, 0.8) !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)!important;
+        color: #000000 !important;
+    }
+
+    .table thead th {
+        background: #0e3704bd !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        padding: 12px 10px;
+    }
+
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        padding: 12px 10px;
+        background-color: rgba(177, 254, 233, 0.755);
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1ff29;
+        transition: 0.3s ease-in-out;
+    }
+
+    .text-muted {
+        text-align: center;
+        color: #ccc !important;
+        margin-top: 30px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .table th,
+        .table td {
+            font-size: 0.85rem;
+            padding: 10px 6px;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h3>Registered Users</h3>
+
+    {% if users %}
+    <div class="table-responsive">
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Vehicle</th>
+                    <th>Pin Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.vehicle_number or '-' }}</td>
+                    <td>{{ user.pin_code or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted">No registered users found.</p>
+    {% endif %}
+</div>
+{% endblock %}

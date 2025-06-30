@@ -1,0 +1,205 @@
+{% extends 'admin/layout.html' %}
+{% block content %}
+<style>
+    .summary-container {
+        margin-top: 60px;
+        color: #fff;
+    }
+
+    .metrics-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-bottom: 40px;
+    }
+
+    .metric-card {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 25px 35px;
+        border-radius: 14px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        text-align: center;
+        min-width: 200px;
+    }
+
+    .metric-card h4 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #00d5ff;
+    }
+
+    .metric-card p {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    h2.section-heading {
+        font-family: 'Orbitron';
+        font-size: 2.5rem;
+        padding: 10px;
+        margin: 30px auto;
+        width: fit-content;
+        background: linear-gradient(to right, #f3f3f3, #07e02e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .graph-section {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 70px;
+        margin: 50px auto;
+    }
+
+    .graph-box {
+        background: rgba(102, 102, 102, 0.221);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        width: 320px;
+        margin-bottom: 100px;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 250px !important;
+        background-color: white;
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .graph-desc {
+        margin-top: 15px;
+        color: #d6f6ff;
+        font-size: 0.95rem;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    @media screen and (max-width: 992px) {
+        .graph-box {
+            width: 90%;
+        }
+    }
+</style>
+
+<div class="container summary-container">
+    <h2 class="section-heading" >Parking Summary</h2>
+
+    <div class="metrics-boxes">
+        <div class="metric-card">
+            <h4>{{ total_users }}</h4>
+            <p>Total Users</p>
+        </div>
+        <div class="metric-card">
+            <h4>{{ total_lots }}</h4>
+            <p>Total Parking Lots</p>
+        </div>
+        <div class="metric-card">
+            <h4>{{ total_reservations }}</h4>
+            <p>Total Reservations</p>
+        </div>
+        <div class="metric-card">
+            <h4>{{ active_reservations }}</h4>
+            <p>Active Reservations</p>
+        </div>
+        <div class="metric-card">
+            <h4>₹{{ total_revenue }}</h4>
+            <p>Total Revenue</p>
+        </div>
+    </div>
+</div>
+
+<h2 class="section-heading">Activity Overview</h2>
+
+<div class="graph-section">
+    <div class="graph-box">
+        <canvas id="revenueChart"></canvas>
+        <p class="graph-desc">Monthly revenue earned from parking services.</p>
+    </div>
+    <div class="graph-box">
+        <canvas id="lotUsageChart"></canvas>
+        <p class="graph-desc">Distribution of bookings among parking lots.</p>
+    </div>
+    <div class="graph-box">
+        <canvas id="peakHoursChart"></canvas>
+        <p class="graph-desc">Busiest hours for vehicle check-ins.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ months | tojson }},
+            datasets: [{
+                label: 'Monthly Revenue (₹)',
+                data: {{ revenues | tojson }},
+                backgroundColor: '#36a2eb',
+                borderColor: '#1e88e5',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { labels: { color: '#222', font: { size: 14 } } }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.07)' } },
+                x: { ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.07)' } }
+            }
+        }
+    });
+
+    const lotCtx = document.getElementById('lotUsageChart').getContext('2d');
+    new Chart(lotCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ lot_labels | tojson }},
+            datasets: [{
+                label: 'Bookings per Lot',
+                data: {{ lot_counts | tojson }},
+                backgroundColor: ['#36a2eb', '#ff6384', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40']
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'right', labels: { font: { size: 12 }, color: '#222' } }
+            },
+            cutout: '50%'
+        }
+    });
+
+    const peakCtx = document.getElementById('peakHoursChart').getContext('2d');
+    new Chart(peakCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ peak_hours | tojson }},
+            datasets: [{
+                label: 'Reservations per Hour',
+                data: {{ peak_counts | tojson }},
+                backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { labels: { color: '#222', font: { size: 14 } } }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.07)' } },
+                x: { ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.07)' } }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'user/layout.html' %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(to right, #000000, #110f49, #34215f);
+        color: #fff;
+    }
+
+    .container {
+        margin-top: 50px;
+        padding-bottom: 40px;
+    }
+
+    h3 {
+
+        font-size: 2.5rem;
+        margin: 0 auto 30px auto; /* Center horizontally */
+        width: fit-content;       /* Shrink to text size */
+        background: linear-gradient(to right, #f3f3f3, #07e02e);
+        -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       
+       font-weight: bold;
+       text-align: center;
+    }
+
+    .table {
+        background: rgba(11, 63, 122, 0.8) !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)!important;
+        color: #000000 !important;
+    }
+
+    .table thead th {
+        background: #0e3704bd !important;
+        color: #ffffff !important;
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        padding: 12px 10px;
+    }
+
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        padding: 12px 10px;
+        background-color: rgba(177, 254, 233, 0.755);
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1ff29;
+        transition: 0.3s ease-in-out;
+    }
+
+    .text-warning {
+        font-weight: bold;
+        color: #e1120b !important;
+    }
+
+    .text-muted {
+        text-align: center;
+        color: #ccc !important;
+        margin-top: 30px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .table th,
+        .table td {
+            font-size: 0.85rem;
+            padding: 10px 6px;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h3>Your Parking History</h3>
+
+    {% if reservations %}
+        <div class="table-responsive">
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Parking Lot</th>
+                        <th>Spot</th>
+                        <th>Parked At</th>
+                        <th>Unparked At</th>
+                        <th>Duration</th>
+                        <th>Cost (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservations %}
+                    <tr>
+                        <td>{{ r.spot.lot.prime_location_name }}</td>
+                        <td>{{ r.spot.spot_label }}</td>
+                        <td>{{ r.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if r.leaving_timestamp %}
+                                {{ r.leaving_timestamp.strftime('%Y-%m-%d %H:%M') }}
+                            {% else %}
+                                <span class="text-warning">Still Parked</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if r.leaving_timestamp %}
+                                {% set duration = r.leaving_timestamp - r.parking_timestamp %}
+                                {% set total_minutes = duration.total_seconds() // 60 %}
+                                {% set hours = (total_minutes // 60) | int %}
+                                {% set minutes = (total_minutes % 60) | int %}
+                                {{ hours }} hr {{ minutes }} min
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ r.parking_cost if r.parking_cost else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted">No parking history found.</p>
+    {% endif %}
+</div>
+{% endblock %}

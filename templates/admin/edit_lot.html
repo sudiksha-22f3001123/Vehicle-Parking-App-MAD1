@@ -1,0 +1,160 @@
+{% extends 'admin/layout.html' %}
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(120deg, #090a1a 0%, #2c165a 50%, #94476b 100%);
+        color: #fff;
+        min-height: 100vh;
+    }
+    .edit-lot-card {
+        max-width: 700px;
+        margin: 48px auto;
+        padding: 38px 34px 30px 34px;
+        background: rgba(255,255,255,0.12);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.27), 0 2px 8px 0 rgba(30,221,255,0.12);
+        backdrop-filter: blur(18px) saturate(120%);
+        -webkit-backdrop-filter: blur(18px) saturate(120%);
+        border: 1.5px solid rgba(255,255,255,0.12);
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        background: radial-gradient(circle, #1eddff55 0%, transparent 80%);
+        margin-bottom:30px;
+    }
+    
+    .edit-lot-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.1rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        background: linear-gradient(90deg, #f3f3f3 10%, #02d9ff 90%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 32px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    .edit-table {
+        width: 100%;
+        margin-bottom: 24px;
+    }
+    .edit-table td {
+        padding: 10px 14px 10px 0;
+        vertical-align: middle;
+        border: none;
+    }
+    .edit-table label {
+        font-weight: 600;
+        color: #e0e0f7;
+        letter-spacing: 0.5px;
+        font-size: 1.05rem;
+        margin-bottom: 0;
+    }
+    /* SCOPE form-control styles to only the edit card! */
+    .edit-lot-card .form-control {
+        background: rgba(255,255,255,0.85);
+        border: none;
+        border-radius: 10px;
+        color: #23234c;
+        font-weight: 500;
+        padding: 11px 16px;
+        font-size: 1.06rem;
+        box-shadow: 0 2px 8px rgba(30,221,255,0.07);
+        transition: box-shadow 0.3s, background 0.3s;
+    }
+    .edit-lot-card .form-control:focus {
+        background: #fff;
+        box-shadow: 0 4px 16px #1eddff22;
+        color: #2c2c54;
+    }
+    .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        margin-top: 36px;
+        margin-bottom: 10px;
+        z-index: 2;
+        position: relative;
+    }
+    .btn-save {
+        background: linear-gradient(90deg, #053e13 0%, #4dff21 100%);
+        color: #fff;
+        border: none;
+        padding: 10px 32px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.07rem;
+        box-shadow: 0px 3px 12px rgba(1, 3, 12, 0.7);
+        transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        letter-spacing: 1px;
+    }
+    .btn-save:hover, .btn-save:focus {
+        background: linear-gradient(135deg, #4dff21, #053e13);
+        transform: scale(1.07);
+        color: #f4f4f7;
+        box-shadow: 0px 6px 24px rgba(76, 255, 33, 0.18);
+    }
+    .btn-cancel {
+        background: linear-gradient(90deg, #0e0101 0%, #b90c18 100%);
+        color: #fff;
+        border: none;
+        padding: 10px 32px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.07rem;
+        box-shadow: 0px 3px 12px rgba(1, 3, 12, 0.7);
+        transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        letter-spacing: 1px;
+    }
+    .btn-cancel:hover, .btn-cancel:focus {
+        background: linear-gradient(135deg, #ff0011, #0e0101);
+        transform: scale(1.07);
+        color: #f4f4f7;
+        box-shadow: 0px 6px 24px rgba(255, 0, 17, 0.18);
+    }
+    @media (max-width: 600px) {
+        .edit-table, .edit-table tr, .edit-table td {
+            display: block;
+            width: 100%;
+        }
+        .edit-table td {
+            padding: 8px 0;
+        }
+    }
+</style>
+
+<div class="edit-lot-card">
+    <div class="edit-lot-title">Edit Parking Lot</div>
+    <form method="POST" autocomplete="off">
+        <table class="edit-table">
+            <tr>
+                <td><label for="prime_location_name">Prime Location Name</label></td>
+                <td><input type="text" class="form-control" id="prime_location_name" name="prime_location_name" value="{{ lot.prime_location_name }}" required></td>
+            </tr>
+            <tr>
+                <td><label for="address">Address</label></td>
+                <td><input type="text" class="form-control" id="address" name="address" value="{{ lot.address }}" required></td>
+            </tr>
+            <tr>
+                <td><label for="pin_code">Pin Code</label></td>
+                <td><input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ lot.pin_code }}" required></td>
+            </tr>
+            <tr>
+                <td><label for="price_per_hour">Price per Hour (₹)</label></td>
+                <td><input type="number" step="0.01" class="form-control" id="price_per_hour" name="price_per_hour" value="{{ lot.price_per_hour }}" required></td>
+            </tr>
+            <tr>
+                <td><label for="max_spots">Maximum Parking Spots</label></td>
+                <td><input type="number" class="form-control" id="max_spots" name="max_spots" value="{{ lot.max_spots }}" required></td>
+            </tr>
+        </table>
+        <div class="btn-group">
+            <button type="submit" class="btn-save">Update</button>
+            <a href="{{ url_for('manage_lots') }}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

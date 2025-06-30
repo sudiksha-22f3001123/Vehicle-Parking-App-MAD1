@@ -1,0 +1,33 @@
+{% extends 'admin/layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Search Results for "{{ query }}"</h3>
+
+    {% if lots %}
+        <h5 class="mt-4">Matching Parking Lots</h5>
+        <ul class="list-group">
+            {% for lot in lots %}
+                <li class="list-group-item bg-dark text-white">
+                    {{ lot.prime_location_name }} (Pin: {{ lot.pin_code }})
+                    <a href="{{ url_for('view_spots', lot_id=lot.id) }}" class="btn btn-sm btn-info float-end">View</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if users %}
+        <h5 class="mt-4">Matching Users</h5>
+        <ul class="list-group">
+            {% for user in users %}
+                <li class="list-group-item bg-dark text-white">
+                    {{ user.username }} ({{ user.email }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if not lots and not users %}
+        <p class="text-warning mt-4">No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}
