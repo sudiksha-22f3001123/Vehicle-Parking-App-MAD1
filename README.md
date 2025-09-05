@@ -50,11 +50,6 @@ This is a multi-user web application for managing 4-wheeler parking lots, parkin
 - No manual database creation (do not use DB Browser for SQLite)
 - Front-end design is flexible; you may customize views
 
-## Reference
-- [Secure Parking India](https://www.secureparking.co.in/)
-
-## Screenshots & Wireframes
-See `/templates` for HTML files and `/static` for images used in dashboards and summaries.
-
 ---
 **Modern Application Development I**
+
